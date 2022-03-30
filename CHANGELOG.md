@@ -1,5 +1,35 @@
 # Change Log
 
+## 4.4.2 &mdash; 2022-03-29
+* [Android] While testing adding 20k geofences, the Logger can cause an `OutOfMemory` error.  Define a dedicated thread executor `Executors.newFixedThreadPool(2)` for posting log messages in background.
+* [iOS] remote event-listeners in onAppTerminate to prevent onEnabledChange event being fired in a dying app configured for `stopOnTerminate: true`
+
+# 4.4.1 &mdash; 2022-01-20
+* [Fixed][iOS] Regression bug in iOS SAS authorization strategy
+* [Fixed][Android] Android logger defaulting to LOG_LEVEL_VERBOSE when initially launched configured for LOG_LEVEL_OFF
+* [Changed][iOS] Rebuild with latest XCode `13.2.1`
+
+## 4.4.0 &mdash; 2021-10-29
+* [Added] New `Authorization.strategy "SAS"` (alternative to default `JWT`).
+* [Changed] **Deprecated** `BackgroundGeolocation.removeListener`.  All event-handlers now return a `Subscription` instance containing a `.remove()` method.  You will keep track of your own `subscription` instances and call `.remove()` upon them when you wish to remove an event listener.  Eg:
+
+```javascript
+/// OLD
+const onLocation = (location) => {
+    console.log('[onLocation');
+}
+BackgroundGeolocation.onLocation(onLocation);
+...
+// deprecated: removeListener
+BackgroundGeolocation.removeListener('location', onLocation);
+
+/// NEW:  capture returned subscription instance.
+const onLocationSubscription = BackgroundGeolocation.onLocation(onLocation);
+...
+// Removing an event-listener.
+onLocationSubscription.remove();
+```
+
 ## 4.3.0 &mdash; 2021-09-13
 * [Added][Android] Implement new Android 12 "reduced accuracy" mechanism`requestTemporaryFullAccuracy`.
 * [Fixed][iOS] `Authorization.refreshPayload refreshToken` was not performing a String replace on the `{refreshToken}` template, instead over-writing the entire string.  Eg:  if provided with `'refresh_token': 'Bearer {refreshToken}`, `Bearer ` would be over-written and replaced with only the refresh-token.
