@@ -51,7 +51,7 @@
         <framework src="src/ios/TSLocationManager.xcframework" custom="true" />
         <source-file src="src/ios/CDVBackgroundGeolocation.m" />
         <header-file src="src/ios/CDVBackgroundGeolocation.h" />
-        
+
         <!-- background-geolocation -->
         <config-file parent="NSLocationAlwaysAndWhenInUseUsageDescription" target="*-Info.plist">
             <string>[CHANGEME] Background location tracking is required for our app so we can...</string>
@@ -66,6 +66,7 @@
             <string>[CHANGEME] Device motion updates help determine when the device is stationary so the app can save power by turning off location-updates</string>
         </config-file>
         <!-- /background-geolocation -->
+
      </platform>
 
      <!-- android -->
@@ -96,7 +97,7 @@
                 <param name="android-package" value="com.transistorsoft.cordova.bggeo.CDVBackgroundGeolocation"/>
             </feature>
         </config-file>
-        
+
         <!-- background-geolocation -->
         <config-file parent="/manifest/application" target="app/src/main/AndroidManifest.xml">
             <meta-data
@@ -104,6 +105,7 @@
                 android:value="YOUR_LICENSE_KEY_HERE" />
         </config-file>
         <!-- /background-geolocation -->
+
      </platform>
 
      <!-- Browser (mock) -->
