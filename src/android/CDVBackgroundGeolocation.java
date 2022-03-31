@@ -356,22 +356,29 @@ public class CDVBackgroundGeolocation extends CordovaPlugin {
         callbackContext.success(config.toJson());
     }
     private void ready(final JSONObject params, final CallbackContext callbackContext) throws JSONException {
+        final TSConfig config = TSConfig.getInstance(cordova.getActivity().getApplicationContext());
+
+        boolean reset = true;
+        if (params.has("reset")) {
+            reset = params.getBoolean("reset");
+        }
         if (mReady) {
-            TSLog.logger.warn(TSLog.warn("#ready already called.  Redirecting to #setConfig"));
-            setConfig(params, callbackContext);
+            if (reset) {
+                TSLog.logger.warn(TSLog.warn("#ready already called.  Redirecting to #setConfig"));
+                setConfig(params, callbackContext);
+            } else {
+                TSLog.logger.warn(TSLog.warn("#ready already called.  Ignored"));
+                callbackContext.success(config.toJson());
+            }
             return;
         }
         mReady = true;
         BackgroundGeolocation adapter = getAdapter();
-        final TSConfig config = TSConfig.getInstance(cordova.getActivity().getApplicationContext());
+
 
         if (config.isFirstBoot()) {
             config.updateWithJSONObject(setHeadlessJobService(params));
         } else {
-            boolean reset = true;
-            if (params.has("reset")) {
-                reset = params.getBoolean("reset");
-            }
             if (reset) {
                 config.reset();
                 config.updateWithJSONObject(setHeadlessJobService(params));
@@ -1126,9 +1133,17 @@ public class CDVBackgroundGeolocation extends CordovaPlugin {
     }
 
     // [iOS 14+ only] -- No Android implementation.  Just return CLAccuracyAuthorizationFull (0)
-    private void requestTemporaryFullAccuracy(String purpose, CallbackContext callbackContext) {
-        callbackContext.success(LocationProviderChangeEvent.ACCURACY_AUTHORIZATION_FULL);
+    private void requestTemporaryFullAccuracy(String purpose, final CallbackContext callbackContext) {
+        getAdapter().requestTemporaryFullAccuracy(purpose, new TSRequestPermissionCallback() {
+            @Override public void onSuccess(int accuracyAuthorization) {
+                callbackContext.success(accuracyAuthorization);
+            }
+            @Override public void onFailure(int accuracyAuthorization) {
+                callbackContext.success(accuracyAuthorization);
+            }
+        });
     }
+
 
     private void getTransistorToken(String orgname, String username, String url, final CallbackContext callbackContext) {
         Context context = cordova.getActivity().getApplicationContext();

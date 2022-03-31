@@ -10,6 +10,14 @@ def libDir = "${projectDir}/libs"
 
 File capacitorConfig = new File("${projectDir}/../../capacitor.config.json")
 
+if (!capacitorConfig.exists()) {
+  // Capacitor V3?
+  capacitorConfig = new File("${projectDir}/../../capacitor.config.ts")
+}
+if (!capacitorConfig.exists()) {
+  capacitorConfig = new File("${projectDir}/../../capacitor.config.js")
+}
+
 // Is this a Capacitor app?
 if (capacitorConfig.exists()) {
   // Capacitor app
@@ -59,6 +67,7 @@ dependencies {
   // Load tslocationmanager.aar
   if (useAndroidX) {
     api(group: 'com.transistorsoft', name:'tslocationmanager', version: '+')
+    implementation "androidx.localbroadcastmanager:localbroadcastmanager:1.0.+"
   } else {
     api(group: 'com.transistorsoft', name:'tslocationmanager-reverse', version: '+')
   }

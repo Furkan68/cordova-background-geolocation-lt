@@ -1,5 +1,95 @@
 # Change Log
 
+## 4.4.2 &mdash; 2022-03-29
+* [Android] While testing adding 20k geofences, the Logger can cause an `OutOfMemory` error.  Define a dedicated thread executor `Executors.newFixedThreadPool(2)` for posting log messages in background.
+* [iOS] remote event-listeners in onAppTerminate to prevent onEnabledChange event being fired in a dying app configured for `stopOnTerminate: true`
+
+# 4.4.1 &mdash; 2022-01-20
+* [Fixed][iOS] Regression bug in iOS SAS authorization strategy
+* [Fixed][Android] Android logger defaulting to LOG_LEVEL_VERBOSE when initially launched configured for LOG_LEVEL_OFF
+* [Changed][iOS] Rebuild with latest XCode `13.2.1`
+
+## 4.4.0 &mdash; 2021-10-29
+* [Added] New `Authorization.strategy "SAS"` (alternative to default `JWT`).
+* [Changed] **Deprecated** `BackgroundGeolocation.removeListener`.  All event-handlers now return a `Subscription` instance containing a `.remove()` method.  You will keep track of your own `subscription` instances and call `.remove()` upon them when you wish to remove an event listener.  Eg:
+
+```javascript
+/// OLD
+const onLocation = (location) => {
+    console.log('[onLocation');
+}
+BackgroundGeolocation.onLocation(onLocation);
+...
+// deprecated: removeListener
+BackgroundGeolocation.removeListener('location', onLocation);
+
+/// NEW:  capture returned subscription instance.
+const onLocationSubscription = BackgroundGeolocation.onLocation(onLocation);
+...
+// Removing an event-listener.
+onLocationSubscription.remove();
+```
+
+## 4.3.0 &mdash; 2021-09-13
+* [Added][Android] Implement new Android 12 "reduced accuracy" mechanism`requestTemporaryFullAccuracy`.
+* [Fixed][iOS] `Authorization.refreshPayload refreshToken` was not performing a String replace on the `{refreshToken}` template, instead over-writing the entire string.  Eg:  if provided with `'refresh_token': 'Bearer {refreshToken}`, `Bearer ` would be over-written and replaced with only the refresh-token.
+* [Fixed][Android] Fixed crash reported by Huawei device, where verticalAccuracy returns NaN.
+* [Fixed][iOS] add config change listeners for `heartbeatInterval` and `preventSuspend` to dynamically update interval when changed with `setConfig`.
+774
+* [Changed][Android] Update Android default `okhttp` version to `3.12.+`.
+* [Changed][Android] Update Android `eventbus` to `3.2.0`.
+* [Changed][iOS] Re-compile iOS `TSLocationManager` using XCode 12.4 instead of `12.5.1`.
+* [Fixed][Android] Fix an edge-case requesting motion permission.  If `getCurrentPosition()` is executed before `.start()`, the Android SDK fails to request motion permission.
+
+## 4.1.3 &mdash; 2021-07-26
+* [Fixed][Android] Add dependency `localbroadcastmanager` when using AndroidX.
+* [Changed][Android] Load Android dependency `android-permissions` from MavenCentral instead of deprecated jCenter.
+
+## 4.1.2 &mdash; 2021-06-22
+* [Changed][Android] Update okhttp default version from `3.12.+` -> `3.14.+`.  Bump `play-services-lo
+cation:16.+` -> `18.+`
+
+## 4.1.1 &mdash; 2021-06-11
+* [Fixed][iOS] Reports 2 reports of iOS crash `NSInvalidArgumentException (TSLocation.m line 178)` with iOS 14
+.x.  Wrap JSON serialization in @try/@catch block.  iOS JSON serialization docs state the supplied NSError err
+or ref should report problems but it seems this is only "sometimes" now.
+
+## 4.1.0 &mdash; 2021-06-07
+* [Added] Add typescript constants for plugin events, eg: `BackgroundGeolocation.EVENT_MOTIONCHANGE`.
+- [Changed] `Config.authorization` will perform regexp on the received response, searching for keys such as `accessToken`, `access_token`, `refreshToken`, `refresh_token`.
+- [Fixed][Android] Fix threading issue `ConcurrentMmodificationException` in `TSConfig`
+- [Fixed][Android] Don't synchronize access to ThreadPool.  Addresses ANR issues
+- [Fixed][Android] Implmementing State.didDeviceReboot in previous version introduced a source of ANR due time required to generate and persist JSON Config.  Solution is to simply perform in Background-thread.
+
+## 4.0.2 &mdash; 2021-05-25
+* [Fixed][Android] Fix failure to detect Capacitor 3 projects with capacitor.config.ts instead of expected capacitor.config.json
+
+## 4.0.1 &mdash; 2021-03-25
+
+* [Changed] Re-generate docs with latest typedoc.  The docs search feature now actually works.
+* [Changed][iOS] Update `pod CocoaLumberjack` to latest `~> 3.7.0`.
+
+## 4.0.0 &mdash; 2021-03-09
+
+* [Changed][iOS] Migrate `TSLocationManager.framework` to new `.xcframework` for *MacCatalyst* support with new Apple silcon.
+
+### :warning: Breaking Change:  Requires `cocoapods >= 1.10+`.
+
+*iOS'* new `.xcframework` requires *cocoapods >= 1.10+*:
+
+```console
+$ pod --version
+// if < 1.10.0
+$ sudo gem install cocoapods
+```
+
+### :warning: Breaking Change: `cordova-plugin-background-fetch`.
+
+- See [Breaking Changes with `cordova-plugin-background-fetch@7.0.0`](https://github.com/transistorsoft/cordova-plugin-background-fetch/blob/master/CHANGELOG.md#701--2021-02-18)
+
+## 3.10.0 &mdash; 2020-11-26
+- [Changed] Remove `Config.encrypt` feature.  This feature has always been flagging a Security Issue with Google Play Console and now the iOS `TSLocationManager` is being flagged for a virus by *Avast* *MacOS:Pirrit-CS[PUP]*.  This seems to be a false-positive due to importing [RNCryptor](https://github.com/RNCryptor/RNCryptor) package.
+
 ## 3.9.4 &mdash; 2020-11-06
 
 - [Fixed][iOS] Fix issue with iOS buffer-timer with requestPermission.  Could execute callback twice.

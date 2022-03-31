@@ -1,8 +1,10 @@
-Cordova / Capacitor Background Geolocation &middot; [![npm](https://img.shields.io/npm/dm/cordova-background-geolocation-lt.svg)]() [![npm](https://img.shields.io/npm/v/cordova-background-geolocation-lt.svg)]()
+Cordova Background Geolocation &middot; [![npm](https://img.shields.io/npm/dm/cordova-background-geolocation-lt.svg)]() [![npm](https://img.shields.io/npm/v/cordova-background-geolocation-lt.svg)]()
 ===========================================================================
 
 [![](https://dl.dropboxusercontent.com/s/nm4s5ltlug63vv8/logo-150-print.png?dl=1)](https://www.transistorsoft.com)
 
+-----------------------------------------------------------------
+### :new: :stop_sign: *Capacitor* version now available! See [__`capacitor-background-geolocation`__](https://github.com/transistorsoft/capacitor-background-geolocation) :stop_sign:
 -------------------------------------------------------------------------------
 
 The *most* sophisticated background **location-tracking & geofencing** module with battery-conscious motion-detection intelligence for **iOS** and **Android**.
@@ -13,7 +15,7 @@ The plugin's [Philosophy of Operation](../../wiki/Philosophy-of-Operation) is to
 
 - When the device is detected be **stationary**, the plugin will automatically turn off location-services to conserve energy.
 
-Also available for [React Native](https://github.com/transistorsoft/react-native-background-geolocation), [NativeScript](https://github.com/transistorsoft/nativescript-background-geolocation-lt) and pure native apps.
+Also available for [Capacitor](https://github.com/transistorsoft/capacitor-background-geolocation), [React Native](https://github.com/transistorsoft/react-native-background-geolocation), [Flutter](https://github.com/transistorsoft/flutter_background_geolocation).
 
 -----------------------------------------------------------------------------
 
@@ -43,6 +45,12 @@ The **[Android plugin](http://www.transistorsoft.com/shop/products/cordova-backg
 ## :large_blue_diamond: Installing the plugin ##
 
 :warning: After installing the plugin, you must [Configure the Plugin](#large_blue_diamond-configuring-the-plugin) for both [iOS](#ios) &amp; [Android](#android).
+:warning: Cocoapods __`>= 1.10.0`__ is required.
+```console
+$ pod --version
+// if < 1.10.0
+$ sudo gem install cocoapods
+```
 
 - #### From npm
 
