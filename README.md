@@ -3,6 +3,8 @@ Cordova Background Geolocation &middot; [![npm](https://img.shields.io/npm/dm/co
 
 [![](https://dl.dropboxusercontent.com/s/nm4s5ltlug63vv8/logo-150-print.png?dl=1)](https://www.transistorsoft.com)
 
+-----------------------------------------------------------------
+### :new: :stop_sign: *Capacitor* version now available! See [__`capacitor-background-geolocation`__](https://github.com/transistorsoft/capacitor-background-geolocation) :stop_sign:
 -------------------------------------------------------------------------------
 
 The *most* sophisticated background **location-tracking & geofencing** module with battery-conscious motion-detection intelligence for **iOS** and **Android**.
@@ -13,7 +15,7 @@ The plugin's [Philosophy of Operation](../../wiki/Philosophy-of-Operation) is to
 
 - When the device is detected be **stationary**, the plugin will automatically turn off location-services to conserve energy.
 
-Also available for [React Native](https://github.com/transistorsoft/react-native-background-geolocation), [NativeScript](https://github.com/transistorsoft/nativescript-background-geolocation-lt) and pure native apps.
+Also available for [Capacitor](https://github.com/transistorsoft/capacitor-background-geolocation), [React Native](https://github.com/transistorsoft/react-native-background-geolocation), [Flutter](https://github.com/transistorsoft/flutter_background_geolocation).
 
 -----------------------------------------------------------------------------
 
@@ -43,6 +45,12 @@ The **[Android plugin](http://www.transistorsoft.com/shop/products/cordova-backg
 ## :large_blue_diamond: Installing the plugin ##
 
 :warning: After installing the plugin, you must [Configure the Plugin](#large_blue_diamond-configuring-the-plugin) for both [iOS](#ios) &amp; [Android](#android).
+:warning: Cocoapods __`>= 1.10.0`__ is required.
+```console
+$ pod --version
+// if < 1.10.0
+$ sudo gem install cocoapods
+```
 
 - #### From npm
 
@@ -104,6 +112,53 @@ $ cordova plugin add https://github.com/transistorsoft/cordova-background-geoloc
           <meta-data
             android:name="com.transistorsoft.locationmanager.license_key"
             android:value="YOUR_LICENSE_KEY_HERE" />
+      </config-file>
+      <!-- /background-geolocation -->
+</platform>
+```
+
+### AndroidX (`cordova-android >= 9.0.0`)
+
+It's *highly* recommended to configure your app for *Android X* when using *Cordova 10* / `cordova-android >= 9.0.0`.
+
+```xml
+<platform name="android">
+        <preference name="AndroidXEnabled" value="true" />
+        .
+        .
+        .
+</platform>
+```
+
+```bash
+$ cordova plugin add cordova-plugin-androidx-adapter
+```
+
+:warning: If you see the following error, you need to configure your app for *Android X*.
+```
+java.lang.RuntimeException: Unable to get provider com.transistorsoft.locationmanager.util.LogFileProvider: java.lang.ClassNotFoundException
+```
+
+### Android 10 and *When in Use* Location Authorization
+
+Android 10 introduces *When in Use* location authorization.  If you're building with __`compileSdkVersion 29`__, add the following elements to your **`config.xml`**, within the same `<config-file>` block above.  This allows your app to continue location-tracking when location-services are initiated while your app is in the foreground.  For example:
+
+```javascript
+onClickStartTracking() {
+    // Initiate tracking while app is in foreground.
+    BackgroundGeolocation.changePace(true);
+}
+```
+
+```diff
+<platform name="android">
+      <!-- background-geolocation -->
+      <config-file parent="/manifest/application" target="app/src/main/AndroidManifest.xml">
+          <meta-data
+            android:name="com.transistorsoft.locationmanager.license_key"
+            android:value="YOUR_LICENSE_KEY_HERE" />
++         <service android:name="com.transistorsoft.locationmanager.service.TrackingService" android:foregroundServiceType="location" />
++         <service android:name="com.transistorsoft.locationmanager.service.LocationRequestService" android:foregroundServiceType="location" />
       </config-file>
       <!-- /background-geolocation -->
 </platform>
